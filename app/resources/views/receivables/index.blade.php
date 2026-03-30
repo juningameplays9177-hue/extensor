@@ -34,6 +34,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th style="width: 44px; text-align: center;">Ok</th>
                         <th>Descricao</th>
                         <th>Cliente</th>
                         <th>Valor</th>
@@ -48,6 +49,9 @@
                 <tbody>
                     @forelse ($receivables as $receivable)
                         <tr style="{{ $receivable->isOverdue() ? 'background: #fef2f2;' : '' }}">
+                            <td style="text-align: center;">
+                                <input type="checkbox" aria-label="Selecionar {{ $receivable->description }}">
+                            </td>
                             <td><strong>{{ $receivable->description }}</strong></td>
                             <td>{{ $receivable->rental ? $receivable->rental->client->name : '-' }}</td>
                             <td><strong style="color: #3b82f6;">R$ {{ number_format($receivable->value, 2, ',', '.') }}</strong></td>
@@ -84,7 +88,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" style="text-align: center; padding: 20px; color: var(--muted);">
+                            <td colspan="10" style="text-align: center; padding: 20px; color: var(--muted);">
                                 Nenhuma conta a receber cadastrada.
                             </td>
                         </tr>
