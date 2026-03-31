@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DailySaldoGastoItem;
 use App\Models\Expense;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -23,7 +24,7 @@ class ExpenseController extends Controller
         }
 
         $expenses = $query->get();
-
+        
         $stats = [
             'total_pending' => Expense::where('status', Expense::STATUS_PENDING)->sum('value'),
             'total_paid' => Expense::where('status', Expense::STATUS_PAID)->sum('value'),
@@ -37,13 +38,17 @@ class ExpenseController extends Controller
             ? date('Y-m-d', strtotime($saldoRaw))
             : now()->format('Y-m-d');
 
-        $saldoGastosItems = DailySaldoGastoItem::query()
-            ->whereDate('ref_date', $saldoDate)
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get();
-
-        $saldoGastosTotal = (float) $saldoGastosItems->sum('value');
+        if (Schema::hasTable('daily_saldo_gastos_items')) {
+            $saldoGastosItems = DailySaldoGastoItem::query()
+                ->whereDate('ref_date', $saldoDate)
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get();
+            $saldoGastosTotal = (float) $saldoGastosItems->sum('value');
+        } else {
+            $saldoGastosItems = collect();
+            $saldoGastosTotal = 0.0;
+        }
 
         return view('expenses.index', compact(
             'expenses',
@@ -78,44 +83,6 @@ class ExpenseController extends Controller
         Expense::create($data);
 
         return redirect()->route('expenses.index')->with('status', 'Conta a pagar criada com sucesso.');
-    }
-
-    public function storeSaldoGastoDia(Request $request): RedirectResponse
-    {
-        $data = $request->validate([
-            'ref_date' => ['required', 'date'],
-            'name' => ['required', 'string', 'max:255'],
-            'value' => ['nullable', 'numeric', 'min:0'],
-        ]);
-        $data['value'] = $data['value'] ?? 0;
-        $data['sort_order'] = (int) DailySaldoGastoItem::whereDate('ref_date', $data['ref_date'])->max('sort_order') + 1;
-
-        DailySaldoGastoItem::create($data);
-
-        return $this->redirectExpensesWithSaldo($request, 'Lançamento adicionado na declaração de saldo.');
-    }
-
-    public function updateSaldoGastoDia(Request $request, DailySaldoGastoItem $daily_saldo_gasto_item): RedirectResponse
-    {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'value' => ['nullable', 'numeric', 'min:0'],
-        ]);
-        $data['value'] = $data['value'] ?? 0;
-
-        $daily_saldo_gasto_item->update($data);
-
-        return $this->redirectExpensesWithSaldo($request, 'Lançamento atualizado.');
-    }
-
-    public function destroySaldoGastoDia(Request $request, DailySaldoGastoItem $daily_saldo_gasto_item): RedirectResponse
-    {
-        $ref = $daily_saldo_gasto_item->ref_date->format('Y-m-d');
-        $daily_saldo_gasto_item->delete();
-
-        $request->merge(['saldo_date' => $ref]);
-
-        return $this->redirectExpensesWithSaldo($request, 'Lançamento removido.');
     }
 
     public function edit(Expense $expense): View
@@ -164,14 +131,64 @@ class ExpenseController extends Controller
         return redirect()->route('expenses.index')->with('status', 'Conta marcada como paga.');
     }
 
+    public function storeSaldoGastoDia(Request $request): RedirectResponse
+    {
+        if (!Schema::hasTable('daily_saldo_gastos_items')) {
+            return redirect()->route('expenses.index')->with('status', 'Execute a migration para habilitar a declaracao de saldo.');
+        }
+
+        $data = $request->validate([
+            'ref_date' => ['required', 'date'],
+            'name' => ['required', 'string', 'max:255'],
+            'value' => ['nullable', 'numeric', 'min:0'],
+        ]);
+        $data['value'] = $data['value'] ?? 0;
+        $data['sort_order'] = (int) DailySaldoGastoItem::whereDate('ref_date', $data['ref_date'])->max('sort_order') + 1;
+
+        DailySaldoGastoItem::create($data);
+
+        return $this->redirectExpensesWithSaldo($request, 'Lancamento adicionado na declaracao de saldo.');
+    }
+
+    public function updateSaldoGastoDia(Request $request, DailySaldoGastoItem $daily_saldo_gasto_item): RedirectResponse
+    {
+        if (!Schema::hasTable('daily_saldo_gastos_items')) {
+            return redirect()->route('expenses.index')->with('status', 'Tabela da declaracao de saldo nao encontrada.');
+        }
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'value' => ['nullable', 'numeric', 'min:0'],
+        ]);
+        $data['value'] = $data['value'] ?? 0;
+
+        $daily_saldo_gasto_item->update($data);
+
+        return $this->redirectExpensesWithSaldo($request, 'Lancamento atualizado.');
+    }
+
+    public function destroySaldoGastoDia(Request $request, DailySaldoGastoItem $daily_saldo_gasto_item): RedirectResponse
+    {
+        if (!Schema::hasTable('daily_saldo_gastos_items')) {
+            return redirect()->route('expenses.index')->with('status', 'Tabela da declaracao de saldo nao encontrada.');
+        }
+
+        $ref = $daily_saldo_gasto_item->ref_date->format('Y-m-d');
+        $daily_saldo_gasto_item->delete();
+
+        $request->merge(['saldo_date' => $ref]);
+
+        return $this->redirectExpensesWithSaldo($request, 'Lancamento removido.');
+    }
+
     private function redirectExpensesWithSaldo(Request $request, string $message): RedirectResponse
     {
         $q = [];
-        if ($request->filled('return_status')) {
-            $q['status'] = $request->input('return_status');
+        if ($request->filled('status')) {
+            $q['status'] = $request->input('status');
         }
-        if ($request->filled('return_date')) {
-            $q['date'] = $request->input('return_date');
+        if ($request->filled('date')) {
+            $q['date'] = $request->input('date');
         }
         if ($request->filled('saldo_date')) {
             $q['saldo_date'] = $request->input('saldo_date');

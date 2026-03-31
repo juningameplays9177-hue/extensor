@@ -1,9 +1,9 @@
-@extends('layouts.app', ['title' => 'Planilha de cotação e retirada - Top Rio'])
+@extends('layouts.app', ['title' => 'Contas a Pagar - Top Rio'])
 
 @section('content')
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
         <div>
-            <h1 class="title">Planilha de cotação e retirada</h1>
+            <h1 class="title">Contas a Pagar</h1>
             <p class="subtitle">Gerencie as despesas do dia</p>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
@@ -83,7 +83,7 @@
                     @empty
                         <tr>
                             <td colspan="8" style="text-align: center; padding: 20px; color: var(--muted);">
-                                Nenhum registro na planilha de cotação e retirada.
+                                Nenhuma conta a pagar cadastrada.
                             </td>
                         </tr>
                     @endforelse
@@ -95,8 +95,8 @@
     <div class="card" style="margin-top: 24px;">
         <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 16px;">
             <div>
-                <h2 class="title" style="font-size: 1.15rem; margin: 0 0 6px 0;">Declaração de saldo — gastos do dia</h2>
-                <p class="subtitle" style="margin: 0;">Lista do dia: nome e valor.</p>
+                <h2 class="title" style="font-size: 1.15rem; margin: 0 0 6px 0;">Declaracao de saldo - gastos do dia</h2>
+                <p class="subtitle" style="margin: 0;">Lista do dia com nome e valor.</p>
             </div>
             <form method="get" action="{{ route('expenses.index') }}" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                 @if(request()->has('status'))
@@ -117,13 +117,13 @@
                         <th style="width: 48px;">#</th>
                         <th>Nome</th>
                         <th style="width: 140px;">Valor (R$)</th>
-                        <th style="text-align: right; width: 200px;">Ações</th>
+                        <th style="text-align: right; width: 200px;">Acoes</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if($saldoGastosItems->isEmpty())
                         <tr>
-                            <td colspan="4" style="text-align: center; padding: 16px; color: var(--muted);">Nenhum lançamento para esta data.</td>
+                            <td colspan="4" style="text-align: center; padding: 16px; color: var(--muted);">Nenhum lancamento para esta data.</td>
                         </tr>
                     @endif
                     @foreach ($saldoGastosItems as $i => $item)
@@ -136,10 +136,10 @@
                                     @method('PUT')
                                 </form>
                                 @if(request()->has('status'))
-                                    <input type="hidden" name="return_status" value="{{ request('status') }}" form="{{ $sid }}">
+                                    <input type="hidden" name="status" value="{{ request('status') }}" form="{{ $sid }}">
                                 @endif
                                 @if(request()->has('date'))
-                                    <input type="hidden" name="return_date" value="{{ request('date') }}" form="{{ $sid }}">
+                                    <input type="hidden" name="date" value="{{ request('date') }}" form="{{ $sid }}">
                                 @endif
                                 <input type="hidden" name="saldo_date" value="{{ $saldoDate }}" form="{{ $sid }}">
                                 <input type="text" name="name" form="{{ $sid }}" value="{{ old('name', $item->name) }}" required
@@ -152,14 +152,14 @@
                             <td style="text-align: right; vertical-align: middle;">
                                 <div style="display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
                                     <button type="submit" form="{{ $sid }}" class="btn btn-muted" style="padding: 6px 12px; font-size: 13px;">Salvar</button>
-                                    <form method="POST" action="{{ route('expenses.saldo-gastos.destroy', $item) }}" onsubmit="return confirm('Remover este lançamento?');" style="display: inline;">
+                                    <form method="POST" action="{{ route('expenses.saldo-gastos.destroy', $item) }}" onsubmit="return confirm('Remover este lancamento?');" style="display: inline;">
                                         @csrf
                                         @method('DELETE')
                                         @if(request()->has('status'))
-                                            <input type="hidden" name="return_status" value="{{ request('status') }}">
+                                            <input type="hidden" name="status" value="{{ request('status') }}">
                                         @endif
                                         @if(request()->has('date'))
-                                            <input type="hidden" name="return_date" value="{{ request('date') }}">
+                                            <input type="hidden" name="date" value="{{ request('date') }}">
                                         @endif
                                         <input type="hidden" name="saldo_date" value="{{ $saldoDate }}">
                                         <button type="submit" class="btn btn-danger" style="padding: 6px 12px; font-size: 13px;">Excluir</button>
@@ -179,10 +179,10 @@
                                 @csrf
                                 <input type="hidden" name="ref_date" value="{{ $saldoDate }}">
                                 @if(request()->has('status'))
-                                    <input type="hidden" name="return_status" value="{{ request('status') }}">
+                                    <input type="hidden" name="status" value="{{ request('status') }}">
                                 @endif
                                 @if(request()->has('date'))
-                                    <input type="hidden" name="return_date" value="{{ request('date') }}">
+                                    <input type="hidden" name="date" value="{{ request('date') }}">
                                 @endif
                                 <input type="hidden" name="saldo_date" value="{{ $saldoDate }}">
                                 <span style="font-size: 13px; color: var(--muted);">Novo:</span>

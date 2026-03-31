@@ -37,11 +37,10 @@ Route::middleware('auth')->group(function (): void {
         
         Route::resource('expenses', ExpenseController::class)->except(['show']);
         Route::patch('/expenses/{expense}/mark-as-paid', [ExpenseController::class, 'markAsPaid'])->name('expenses.mark-as-paid');
-
         Route::post('/expenses/saldo-gastos-dia', [ExpenseController::class, 'storeSaldoGastoDia'])->name('expenses.saldo-gastos.store');
         Route::put('/expenses/saldo-gastos-dia/{daily_saldo_gasto_item}', [ExpenseController::class, 'updateSaldoGastoDia'])->name('expenses.saldo-gastos.update');
         Route::delete('/expenses/saldo-gastos-dia/{daily_saldo_gasto_item}', [ExpenseController::class, 'destroySaldoGastoDia'])->name('expenses.saldo-gastos.destroy');
-
+        
         Route::resource('receivables', ReceivableController::class)->except(['show']);
         Route::patch('/receivables/{receivable}/mark-as-paid', [ReceivableController::class, 'markAsPaid'])->name('receivables.mark-as-paid');
         
