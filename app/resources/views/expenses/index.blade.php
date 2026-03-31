@@ -1,16 +1,16 @@
-@extends('layouts.app', ['title' => 'Contas a Pagar - Top Rio'])
+@extends('layouts.app', ['title' => 'Planilha de cotação e retirada - Top Rio'])
 
 @section('content')
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
         <div>
-            <h1 class="title">Contas a Pagar</h1>
-            <p class="subtitle">Gerencie as despesas do dia</p>
+            <h1 class="title">Planilha de cotação e retirada</h1>
+            <p class="subtitle">Planilha com descrição, valor, vencimento, pagamento, recibo, NF, status e ações.</p>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <a href="{{ route('expenses.index', array_filter(['status' => 'pending', 'date' => request('date'), 'saldo_date' => request('saldo_date')])) }}" class="btn btn-muted">Pendentes</a>
-            <a href="{{ route('expenses.index', array_filter(['status' => 'paid', 'date' => request('date'), 'saldo_date' => request('saldo_date')])) }}" class="btn btn-muted">Pagas</a>
-            <a href="{{ route('expenses.index', array_filter(['date' => request('date'), 'saldo_date' => request('saldo_date')])) }}" class="btn btn-muted">Todas</a>
-            <a href="{{ route('expenses.create') }}" class="btn btn-primary">Nova Conta</a>
+            <a href="{{ route('expenses.index', array_filter(['status' => 'pending', 'date' => request('date')])) }}" class="btn btn-muted">Pendentes</a>
+            <a href="{{ route('expenses.index', array_filter(['status' => 'paid', 'date' => request('date')])) }}" class="btn btn-muted">Pagas</a>
+            <a href="{{ route('expenses.index', array_filter(['date' => request('date')])) }}" class="btn btn-muted">Todas</a>
+            <a href="{{ route('expenses.create') }}" class="btn btn-primary">Nova entrada</a>
         </div>
     </div>
 
@@ -30,18 +30,19 @@
     </div>
 
     <div class="card" style="margin-top: 18px;">
+        <h2 class="title" style="font-size: 1.1rem; margin: 0 0 12px 0;">Planilha</h2>
         <div class="table-wrap">
             <table>
-                <thead>
+                <thead style="background: #f8fafc;">
                     <tr>
-                        <th>Descricao</th>
+                        <th>Descrição</th>
                         <th>Valor</th>
                         <th>Vencimento</th>
                         <th>Pagamento</th>
                         <th>Recibo</th>
                         <th>NF</th>
                         <th>Status</th>
-                        <th style="text-align: right;">Acoes</th>
+                        <th style="text-align: right;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,7 +84,7 @@
                     @empty
                         <tr>
                             <td colspan="8" style="text-align: center; padding: 20px; color: var(--muted);">
-                                Nenhuma conta a pagar cadastrada.
+                                Nenhum registro na planilha.
                             </td>
                         </tr>
                     @endforelse
