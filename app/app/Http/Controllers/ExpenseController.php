@@ -169,7 +169,9 @@ class ExpenseController extends Controller
             return redirect()->route('expenses.index')->with('status', 'Nao foi possivel salvar o lancamento de saldo.');
         }
 
-        return $this->redirectExpensesWithSaldo($request, 'Lancamento adicionado na declaracao de saldo.');
+        return redirect()->route('expenses.index', [
+            'saldo_date' => $request->input('saldo_date', $request->input('ref_date')),
+        ])->with('status', 'Lancamento adicionado na declaracao de saldo e incluido na lista principal.');
     }
 
     public function updateSaldoGastoDia(Request $request, DailySaldoGastoItem $daily_saldo_gasto_item): RedirectResponse
