@@ -34,40 +34,21 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 44px; text-align: center;">Ok</th>
-                        <th>Descricao</th>
-                        <th>Cliente</th>
-                        <th>Valor</th>
-                        <th>Vencimento</th>
-                        <th>Recebimento</th>
+                        <th>Nome</th>
+                        <th>Endereco</th>
                         <th>Recibo</th>
                         <th>NF</th>
-                        <th>Status</th>
                         <th style="text-align: right;">Acoes</th>
+                        <th style="width: 44px; text-align: center;">Ok</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($receivables as $receivable)
                         <tr style="{{ $receivable->isOverdue() ? 'background: #fef2f2;' : '' }}">
-                            <td style="text-align: center;">
-                                <input type="checkbox" aria-label="Selecionar {{ $receivable->description }}">
-                            </td>
-                            <td><strong>{{ $receivable->description }}</strong></td>
-                            <td>{{ $receivable->rental ? $receivable->rental->client->name : '-' }}</td>
-                            <td><strong style="color: #3b82f6;">R$ {{ number_format($receivable->value, 2, ',', '.') }}</strong></td>
-                            <td>{{ $receivable->due_date->format('d/m/Y') }}</td>
-                            <td>{{ $receivable->payment_date ? $receivable->payment_date->format('d/m/Y') : '-' }}</td>
+                            <td><strong>{{ $receivable->rental ? $receivable->rental->client->name : ($receivable->description ?? '-') }}</strong></td>
+                            <td>{{ $receivable->rental ? $receivable->rental->full_address : '-' }}</td>
                             <td>{{ $receivable->receipt_number ?? '-' }}</td>
                             <td>{{ $receivable->invoice_number ?? '-' }}</td>
-                            <td>
-                                @if($receivable->status === 'paid')
-                                    <span class="badge" style="background: #10b981; color: white;">Recebido</span>
-                                @elseif($receivable->isOverdue())
-                                    <span class="badge danger">Vencido</span>
-                                @else
-                                    <span class="badge warning">Pendente</span>
-                                @endif
-                            </td>
                             <td style="text-align: right;">
                                 <div style="display: flex; gap: 8px; justify-content: flex-end;">
                                     <a href="{{ route('receivables.edit', $receivable) }}" class="btn btn-muted" style="padding: 6px 12px; font-size: 13px;">Editar</a>
@@ -85,10 +66,13 @@
                                     </form>
                                 </div>
                             </td>
+                            <td style="text-align: center;">
+                                <input type="checkbox" aria-label="Selecionar {{ $receivable->description }}">
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" style="text-align: center; padding: 20px; color: var(--muted);">
+                            <td colspan="6" style="text-align: center; padding: 20px; color: var(--muted);">
                                 Nenhuma conta a receber cadastrada.
                             </td>
                         </tr>
