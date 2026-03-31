@@ -33,63 +33,6 @@
         </div>
     </div>
 
-    <div class="card" style="margin-top: 18px;">
-        <h3 style="margin-bottom: 4px;">Pessoas que me devem</h3>
-        <p class="meta">Lista de contas a receber pendentes.</p>
-        <form method="POST" action="{{ route('finance.panel-3.people-who-owe.store') }}" style="margin-top: 12px; display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 10px; align-items: end;">
-            @csrf
-            <div>
-                <label for="name">Nome</label>
-                <input id="name" name="name" required placeholder="Nome da pessoa">
-            </div>
-            <div>
-                <label for="value">Valor</label>
-                <input id="value" name="value" type="number" step="0.01" min="0" required placeholder="0,00">
-            </div>
-            <div>
-                <label for="due_date">Data</label>
-                <input id="due_date" name="due_date" type="date" required value="{{ date('Y-m-d') }}">
-            </div>
-            <div>
-                <button type="submit" class="btn btn-primary">Adicionar pessoa</button>
-            </div>
-        </form>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Valor</th>
-                        <th>Data</th>
-                        <th style="text-align: right;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($peopleWhoOwe as $person)
-                        <tr>
-                            <td colspan="4" style="padding: 8px;">
-                                <form method="POST" action="{{ route('finance.panel-3.people-who-owe.update', $person['id']) }}" style="display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 10px; align-items: center;">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="text" name="name" value="{{ $person['name'] }}" required>
-                                    <input type="number" name="value" value="{{ $person['value'] }}" step="0.01" min="0" required>
-                                    <input type="date" name="due_date" value="{{ $person['date_iso'] }}" required>
-                                    <button type="submit" class="btn btn-muted" style="padding: 6px 12px; font-size: 13px;">Editar</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" style="text-align: center; padding: 20px; color: var(--muted);">
-                                Ninguém devendo no momento.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const labels = @json($labels);
