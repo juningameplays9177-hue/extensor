@@ -153,6 +153,18 @@ class ExpenseController extends Controller
             $data['sort_order'] = (int) DailySaldoGastoItem::whereDate('ref_date', $data['ref_date'])->max('sort_order') + 1;
 
             DailySaldoGastoItem::create($data);
+
+            // Todo item do saldo tambem vira uma despesa na listagem principal.
+            Expense::create([
+                'description' => $data['name'],
+                'value' => $data['value'],
+                'due_date' => $data['ref_date'],
+                'payment_date' => null,
+                'receipt_number' => null,
+                'invoice_number' => null,
+                'status' => Expense::STATUS_PENDING,
+                'notes' => 'Origem: declaracao de saldo - gastos do dia',
+            ]);
         } catch (Throwable $e) {
             return redirect()->route('expenses.index')->with('status', 'Nao foi possivel salvar o lancamento de saldo.');
         }
