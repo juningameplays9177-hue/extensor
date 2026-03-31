@@ -69,18 +69,16 @@
                                 </div>
                             </td>
                             <td style="text-align: center;">
-                                @if($receivable->status === 'pending')
+                                @if($receivable->status === 'paid')
+                                    <input type="checkbox" checked disabled aria-label="Recebido">
+                                @else
                                     <form method="POST" action="{{ route('receivables.mark-as-paid', $receivable) }}" class="inline">
                                         @csrf
                                         @method('PATCH')
-                                        <input
-                                            type="checkbox"
-                                            onchange="this.form.submit()"
-                                            aria-label="Marcar como recebido"
-                                        >
+                                        <input type="checkbox"
+                                               onchange="this.form.submit()"
+                                               aria-label="Marcar como recebido">
                                     </form>
-                                @else
-                                    <input type="checkbox" checked disabled aria-label="Recebido">
                                 @endif
                             </td>
                         </tr>
