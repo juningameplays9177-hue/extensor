@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function (): void {
         Route::patch('/old-clients/{old_client}/toggle-checked', [OldClientController::class, 'toggleChecked'])->name('old-clients.toggle-checked');
         Route::delete('/old-clients/{old_client}', [OldClientController::class, 'destroy'])->name('old-clients.destroy');
         Route::get('/finance/panel-3', [FinancePanel3Controller::class, 'index'])->name('finance.panel-3');
+        Route::post('/finance/panel-3/people-who-owe', [FinancePanel3Controller::class, 'storePersonWhoOwes'])->name('finance.panel-3.people-who-owe.store');
         
         Route::resource('receivables', ReceivableController::class)->except(['show']);
         Route::patch('/receivables/{receivable}/mark-as-paid', [ReceivableController::class, 'markAsPaid'])->name('receivables.mark-as-paid');

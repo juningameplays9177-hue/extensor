@@ -5,10 +5,35 @@ namespace App\Http\Controllers;
 use App\Models\Expense;
 use App\Models\Receivable;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class FinancePanel3Controller extends Controller
 {
+    public function storePersonWhoOwes(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'value' => ['required', 'numeric', 'min:0'],
+            'due_date' => ['required', 'date'],
+        ]);
+
+        Receivable::create([
+            'rental_id' => null,
+            'description' => $data['name'],
+            'value' => $data['value'],
+            'due_date' => $data['due_date'],
+            'payment_date' => null,
+            'receipt_number' => null,
+            'invoice_number' => null,
+            'status' => Receivable::STATUS_PENDING,
+            'notes' => 'Origem: Painel 3 - Pessoas que me devem',
+        ]);
+
+        return redirect()->route('finance.panel-3')->with('status', 'Pessoa adicionada com sucesso.');
+    }
+
     public function index(): View
     {
         $totalIn = (float) Receivable::query()

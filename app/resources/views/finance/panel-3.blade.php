@@ -36,6 +36,24 @@
     <div class="card" style="margin-top: 18px;">
         <h3 style="margin-bottom: 4px;">Pessoas que me devem</h3>
         <p class="meta">Lista de contas a receber pendentes.</p>
+        <form method="POST" action="{{ route('finance.panel-3.people-who-owe.store') }}" style="margin-top: 12px; display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 10px; align-items: end;">
+            @csrf
+            <div>
+                <label for="name">Nome</label>
+                <input id="name" name="name" required placeholder="Nome da pessoa">
+            </div>
+            <div>
+                <label for="value">Valor</label>
+                <input id="value" name="value" type="number" step="0.01" min="0" required placeholder="0,00">
+            </div>
+            <div>
+                <label for="due_date">Data</label>
+                <input id="due_date" name="due_date" type="date" required value="{{ date('Y-m-d') }}">
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">Adicionar pessoa</button>
+            </div>
+        </form>
         <div class="table-wrap">
             <table>
                 <thead>
