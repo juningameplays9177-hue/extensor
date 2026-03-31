@@ -1,10 +1,10 @@
-@extends('layouts.app', ['title' => 'Contas a Receber - Top Rio'])
+@extends('layouts.app', ['title' => 'Planilha de Cotação - Top Rio'])
 
 @section('content')
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
         <div>
-            <h1 class="title">Contas a Receber</h1>
-            <p class="subtitle">Gerencie os recebimentos</p>
+            <h1 class="title">Planilha de Cotação</h1>
+            <p class="subtitle">Nome, endereço, valor devido, recibo, NF e recebimento.</p>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
             <a href="{{ route('receivables.create') }}" class="btn btn-primary">Nova Conta</a>

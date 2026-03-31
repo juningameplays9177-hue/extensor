@@ -1,10 +1,10 @@
-@extends('layouts.app', ['title' => 'Planilha de cotação e retirada - Top Rio'])
+@extends('layouts.app', ['title' => 'Planilha de Retirada - Top Rio'])
 
 @section('content')
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
         <div>
-            <h1 class="title">Planilha de cotação e retirada</h1>
-            <p class="subtitle">Planilha com nome, endereço, valor, vencimento, pagamento, recibo, NF, status e ações.</p>
+            <h1 class="title">Planilha de Retirada</h1>
+            <p class="subtitle">Nome, endereço, valor, vencimento, pagamento, recibo, NF, status e ações.</p>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
             <a href="{{ route('expenses.index', array_filter(['status' => 'pending', 'date' => request('date')])) }}" class="btn btn-muted">Pendentes</a>
