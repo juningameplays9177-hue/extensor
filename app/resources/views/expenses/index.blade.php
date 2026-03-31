@@ -197,5 +197,20 @@
                 </tbody>
             </table>
         </div>
+
+        <div style="margin-top: 14px;">
+            <h3 style="font-size: 1rem; margin: 0 0 8px 0;">Lista de nome e valor</h3>
+            @if($saldoGastosItems->isEmpty())
+                <p class="subtitle" style="margin: 0;">Nenhum item adicionado nesta data.</p>
+            @else
+                <ul style="margin: 0; padding-left: 18px;">
+                    @foreach ($saldoGastosItems as $item)
+                        <li style="margin-bottom: 4px;">
+                            {{ $item->name }} - R$ {{ number_format($item->value, 2, ',', '.') }}
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
     </div>
 @endsection
