@@ -95,7 +95,7 @@
     <div class="card" style="margin-top: 24px;">
         <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 16px;">
             <div>
-                <h2 class="title" style="font-size: 1.15rem; margin: 0 0 6px 0;">Declaracao de saldo - gastos do dia</h2>
+                <h2 class="title" style="font-size: 1.15rem; margin: 0 0 6px 0;">Declaração de saída de gastos do dia</h2>
                 <p class="subtitle" style="margin: 0;">Lista do dia com nome e valor.</p>
             </div>
             <form method="get" action="{{ route('expenses.index') }}" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
