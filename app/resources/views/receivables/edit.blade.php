@@ -1,8 +1,8 @@
-@extends('layouts.app', ['title' => 'Editar Conta a Receber - Top Rio'])
+@extends('layouts.app', ['title' => 'Editar recebimento - Top Rio'])
 
 @section('content')
-    <h1 class="title">Editar Conta a Receber</h1>
-    <p class="subtitle">Atualize as informacoes do recebimento</p>
+    <h1 class="title">Editar recebimento</h1>
+    <p class="subtitle">Atualize o nome e o endereço do cliente.</p>
 
     <div class="card" style="margin-top: 18px;">
         <form method="POST" action="{{ route('receivables.update', $receivable) }}">
@@ -21,8 +21,8 @@
                     </select>
                 </div>
                 <div style="grid-column: 1 / -1;">
-                    <label for="description">Descricao <span style="color: #ef4444;">*</span></label>
-                    <input id="description" name="description" value="{{ old('description', $receivable->description) }}" required autofocus>
+                    <label for="description">Nome <span style="color: #ef4444;">*</span></label>
+                    <input id="description" name="description" value="{{ old('description', $receivable->description) }}" required autofocus placeholder="Nome do cliente">
                 </div>
                 <div>
                     <label for="value">Valor (R$) <span style="color: #ef4444;">*</span></label>
@@ -52,8 +52,8 @@
                     <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date', $receivable->payment_date ? $receivable->payment_date->format('Y-m-d') : '') }}">
                 </div>
                 <div style="grid-column: 1 / -1;">
-                    <label for="notes">Observacoes</label>
-                    <textarea id="notes" name="notes" rows="3">{{ old('notes', $receivable->notes) }}</textarea>
+                    <label for="notes">Endereço</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Endereço completo">{{ old('notes', $receivable->notes) }}</textarea>
                 </div>
             </div>
             <div style="display: flex; gap: 12px; margin-top: 18px;">
