@@ -2,10 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DailySaldoGastoItem;
 use App\Models\Expense;
-use Throwable;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -34,35 +31,7 @@ class ExpenseController extends Controller
                 ->count(),
         ];
 
-        $saldoRaw = $request->query('saldo_date');
-        $saldoDate = is_string($saldoRaw) && strtotime($saldoRaw) !== false
-            ? date('Y-m-d', strtotime($saldoRaw))
-            : now()->format('Y-m-d');
-
-        if ($this->saldoTableReady()) {
-            try {
-                $saldoGastosItems = DailySaldoGastoItem::query()
-                    ->whereDate('ref_date', $saldoDate)
-                    ->orderBy('sort_order')
-                    ->orderBy('id')
-                    ->get();
-                $saldoGastosTotal = (float) $saldoGastosItems->sum('value');
-            } catch (Throwable $e) {
-                $saldoGastosItems = collect();
-                $saldoGastosTotal = 0.0;
-            }
-        } else {
-            $saldoGastosItems = collect();
-            $saldoGastosTotal = 0.0;
-        }
-
-        return view('expenses.index', compact(
-            'expenses',
-            'stats',
-            'saldoDate',
-            'saldoGastosItems',
-            'saldoGastosTotal'
-        ));
+        return view('expenses.index', compact('expenses', 'stats'));
     }
 
     public function create(): View
@@ -135,115 +104,5 @@ class ExpenseController extends Controller
         ]);
 
         return redirect()->route('expenses.index')->with('status', 'Conta marcada como paga.');
-    }
-
-    public function storeSaldoGastoDia(Request $request): RedirectResponse
-    {
-        if (!$this->saldoTableReady()) {
-            return redirect()->route('expenses.index')->with('status', 'Execute a migration para habilitar a declaracao de saldo.');
-        }
-
-        try {
-            $data = $request->validate([
-                'ref_date' => ['required', 'date'],
-                'name' => ['required', 'string', 'max:255'],
-                'value' => ['nullable', 'numeric', 'min:0'],
-            ]);
-            $data['value'] = $data['value'] ?? 0;
-            $data['sort_order'] = (int) DailySaldoGastoItem::whereDate('ref_date', $data['ref_date'])->max('sort_order') + 1;
-
-            DailySaldoGastoItem::create($data);
-
-            // Todo item do saldo tambem vira uma despesa na listagem principal.
-            Expense::create([
-                'description' => $data['name'],
-                'value' => $data['value'],
-                'due_date' => $data['ref_date'],
-                'payment_date' => null,
-                'receipt_number' => null,
-                'invoice_number' => null,
-                'status' => Expense::STATUS_PENDING,
-                'notes' => 'Origem: declaracao de saldo - gastos do dia',
-            ]);
-        } catch (Throwable $e) {
-            return redirect()->route('expenses.index')->with('status', 'Nao foi possivel salvar o lancamento de saldo.');
-        }
-
-        return redirect()->route('expenses.index', [
-            'saldo_date' => $request->input('saldo_date', $request->input('ref_date')),
-        ])->with('status', 'Lancamento adicionado na declaracao de saldo e incluido na lista principal.');
-    }
-
-    public function updateSaldoGastoDia(Request $request, DailySaldoGastoItem $daily_saldo_gasto_item): RedirectResponse
-    {
-        if (!$this->saldoTableReady()) {
-            return redirect()->route('expenses.index')->with('status', 'Tabela da declaracao de saldo nao encontrada.');
-        }
-
-        try {
-            $data = $request->validate([
-                'name' => ['required', 'string', 'max:255'],
-                'value' => ['nullable', 'numeric', 'min:0'],
-            ]);
-            $data['value'] = $data['value'] ?? 0;
-
-            $daily_saldo_gasto_item->update($data);
-        } catch (Throwable $e) {
-            return redirect()->route('expenses.index')->with('status', 'Nao foi possivel atualizar o lancamento de saldo.');
-        }
-
-        return $this->redirectExpensesWithSaldo($request, 'Lancamento atualizado.');
-    }
-
-    public function destroySaldoGastoDia(Request $request, DailySaldoGastoItem $daily_saldo_gasto_item): RedirectResponse
-    {
-        if (!$this->saldoTableReady()) {
-            return redirect()->route('expenses.index')->with('status', 'Tabela da declaracao de saldo nao encontrada.');
-        }
-
-        try {
-            $ref = $daily_saldo_gasto_item->ref_date->format('Y-m-d');
-            $daily_saldo_gasto_item->delete();
-        } catch (Throwable $e) {
-            return redirect()->route('expenses.index')->with('status', 'Nao foi possivel remover o lancamento de saldo.');
-        }
-
-        $request->merge(['saldo_date' => $ref]);
-
-        return $this->redirectExpensesWithSaldo($request, 'Lancamento removido.');
-    }
-
-    private function redirectExpensesWithSaldo(Request $request, string $message): RedirectResponse
-    {
-        $q = [];
-        if ($request->filled('status')) {
-            $q['status'] = $request->input('status');
-        }
-        if ($request->filled('date')) {
-            $q['date'] = $request->input('date');
-        }
-        if ($request->filled('saldo_date')) {
-            $q['saldo_date'] = $request->input('saldo_date');
-        } elseif ($request->filled('ref_date')) {
-            $q['saldo_date'] = $request->input('ref_date');
-        }
-
-        return redirect()->route('expenses.index', $q)->with('status', $message);
-    }
-
-    private function saldoTableReady(): bool
-    {
-        if (!Schema::hasTable('daily_saldo_gastos_items')) {
-            return false;
-        }
-
-        $required = ['ref_date', 'sort_order', 'name', 'value'];
-        foreach ($required as $column) {
-            if (!Schema::hasColumn('daily_saldo_gastos_items', $column)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

@@ -39,9 +39,6 @@ Route::middleware('auth')->group(function (): void {
         
         Route::resource('expenses', ExpenseController::class)->except(['show']);
         Route::patch('/expenses/{expense}/mark-as-paid', [ExpenseController::class, 'markAsPaid'])->name('expenses.mark-as-paid');
-        Route::post('/expenses/saldo-gastos-dia', [ExpenseController::class, 'storeSaldoGastoDia'])->name('expenses.saldo-gastos.store');
-        Route::put('/expenses/saldo-gastos-dia/{daily_saldo_gasto_item}', [ExpenseController::class, 'updateSaldoGastoDia'])->name('expenses.saldo-gastos.update');
-        Route::delete('/expenses/saldo-gastos-dia/{daily_saldo_gasto_item}', [ExpenseController::class, 'destroySaldoGastoDia'])->name('expenses.saldo-gastos.destroy');
         Route::get('/old-clients', [OldClientController::class, 'index'])->name('old-clients.index');
         Route::post('/old-clients', [OldClientController::class, 'store'])->name('old-clients.store');
         Route::patch('/old-clients/{old_client}/toggle-checked', [OldClientController::class, 'toggleChecked'])->name('old-clients.toggle-checked');
