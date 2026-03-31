@@ -6,6 +6,7 @@ use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepotController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\OldClientController;
 use App\Http\Controllers\ReceivableController;
 use App\Http\Controllers\RentalController;
 use App\Http\Controllers\UserController;
@@ -40,6 +41,10 @@ Route::middleware('auth')->group(function (): void {
         Route::post('/expenses/saldo-gastos-dia', [ExpenseController::class, 'storeSaldoGastoDia'])->name('expenses.saldo-gastos.store');
         Route::put('/expenses/saldo-gastos-dia/{daily_saldo_gasto_item}', [ExpenseController::class, 'updateSaldoGastoDia'])->name('expenses.saldo-gastos.update');
         Route::delete('/expenses/saldo-gastos-dia/{daily_saldo_gasto_item}', [ExpenseController::class, 'destroySaldoGastoDia'])->name('expenses.saldo-gastos.destroy');
+        Route::get('/old-clients', [OldClientController::class, 'index'])->name('old-clients.index');
+        Route::post('/old-clients', [OldClientController::class, 'store'])->name('old-clients.store');
+        Route::patch('/old-clients/{old_client}/toggle-checked', [OldClientController::class, 'toggleChecked'])->name('old-clients.toggle-checked');
+        Route::delete('/old-clients/{old_client}', [OldClientController::class, 'destroy'])->name('old-clients.destroy');
         
         Route::resource('receivables', ReceivableController::class)->except(['show']);
         Route::patch('/receivables/{receivable}/mark-as-paid', [ReceivableController::class, 'markAsPaid'])->name('receivables.mark-as-paid');
