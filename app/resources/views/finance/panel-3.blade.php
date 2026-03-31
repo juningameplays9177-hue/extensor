@@ -18,6 +18,7 @@
         <div class="card">
             <div class="meta">Total de entradas (recebidas)</div>
             <div class="value" style="color: #2563eb;">R$ {{ number_format($totalIn, 2, ',', '.') }}</div>
+            <div class="meta" style="margin-top: 6px;">Inclui clientes antigos marcados como pagos.</div>
         </div>
         <div class="card">
             <div class="meta">Total de saídas (pagas)</div>

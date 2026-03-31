@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expense;
+use App\Models\OldClient;
 use App\Models\Receivable;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -57,9 +58,15 @@ class FinancePanel3Controller extends Controller
 
     public function index(): View
     {
-        $totalIn = (float) Receivable::query()
+        $totalInFromReceivables = (float) Receivable::query()
             ->where('status', Receivable::STATUS_PAID)
             ->sum('value');
+
+        $totalInFromOldClients = (float) OldClient::query()
+            ->where('checked', true)
+            ->sum('amount_due');
+
+        $totalIn = $totalInFromReceivables + $totalInFromOldClients;
 
         $totalOut = (float) Expense::query()
             ->where('status', Expense::STATUS_PAID)
