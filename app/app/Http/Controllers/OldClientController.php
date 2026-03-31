@@ -20,7 +20,6 @@ class OldClientController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'receipt_number' => ['nullable', 'string', 'max:50'],
             'amount_due' => ['required', 'numeric', 'min:0'],
         ]);
 

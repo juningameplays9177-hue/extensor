@@ -637,7 +637,7 @@
             </a>
             
             @if(auth()->check() && isset(auth()->user()->role) && auth()->user()->isAdmin())
-                <div class="nav-item has-submenu {{ (request()->routeIs('expenses.*') || request()->routeIs('receivables.*') || request()->routeIs('old-clients.*')) ? 'active' : '' }}" id="financeMenu" style="cursor: pointer;">
+                <div class="nav-item has-submenu {{ (request()->routeIs('expenses.*') || request()->routeIs('receivables.*') || request()->routeIs('old-clients.*') || request()->routeIs('finance.panel-3')) ? 'active' : '' }}" id="financeMenu" style="cursor: pointer;">
                     <span class="nav-item-icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -645,7 +645,7 @@
                     </span>
                     <span class="nav-item-text">Financeiro</span>
                 </div>
-                <div class="nav-submenu" id="financeSubmenu" style="display: {{ (request()->routeIs('expenses.*') || request()->routeIs('receivables.*') || request()->routeIs('old-clients.*')) ? 'block' : 'none' }};">
+                <div class="nav-submenu" id="financeSubmenu" style="display: {{ (request()->routeIs('expenses.*') || request()->routeIs('receivables.*') || request()->routeIs('old-clients.*') || request()->routeIs('finance.panel-3')) ? 'block' : 'none' }};">
                     <a href="{{ route('expenses.index') }}" class="nav-submenu-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
                         <svg class="nav-submenu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -663,6 +663,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2m0 0a6 6 0 00-12 0v2m12 0H7m0 0H2v-2a3 3 0 015.356-1.857M12 7a4 4 0 110 8 4 4 0 010-8z"/>
                         </svg>
                         <span class="nav-submenu-text">Clientes Antigos</span>
+                    </a>
+                    <a href="{{ route('finance.panel-3') }}" class="nav-submenu-item {{ request()->routeIs('finance.panel-3') ? 'active' : '' }}">
+                        <svg class="nav-submenu-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 11V7m0 4l-2 2m2-2l2 2m8 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="nav-submenu-text">Painel 3</span>
                     </a>
                 </div>
                 
@@ -800,7 +806,8 @@
                     // Só remover active se não estiver em uma rota financeira
                     if (!window.location.pathname.includes('/expenses') && 
                         !window.location.pathname.includes('/receivables') &&
-                        !window.location.pathname.includes('/old-clients')) {
+                        !window.location.pathname.includes('/old-clients') &&
+                        !window.location.pathname.includes('/finance/panel-3')) {
                         financeNavItem.classList.remove('active');
                     }
                 }

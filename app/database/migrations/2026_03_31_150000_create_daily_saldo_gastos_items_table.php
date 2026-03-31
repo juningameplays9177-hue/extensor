@@ -8,6 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('daily_saldo_gastos_items')) {
+            return;
+        }
+
         Schema::create('daily_saldo_gastos_items', function (Blueprint $table) {
             $table->id();
             $table->date('ref_date');

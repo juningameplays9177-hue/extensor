@@ -6,6 +6,7 @@ use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepotController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\FinancePanel3Controller;
 use App\Http\Controllers\OldClientController;
 use App\Http\Controllers\ReceivableController;
 use App\Http\Controllers\RentalController;
@@ -45,6 +46,7 @@ Route::middleware('auth')->group(function (): void {
         Route::post('/old-clients', [OldClientController::class, 'store'])->name('old-clients.store');
         Route::patch('/old-clients/{old_client}/toggle-checked', [OldClientController::class, 'toggleChecked'])->name('old-clients.toggle-checked');
         Route::delete('/old-clients/{old_client}', [OldClientController::class, 'destroy'])->name('old-clients.destroy');
+        Route::get('/finance/panel-3', [FinancePanel3Controller::class, 'index'])->name('finance.panel-3');
         
         Route::resource('receivables', ReceivableController::class)->except(['show']);
         Route::patch('/receivables/{receivable}/mark-as-paid', [ReceivableController::class, 'markAsPaid'])->name('receivables.mark-as-paid');

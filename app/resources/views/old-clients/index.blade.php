@@ -4,7 +4,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
         <div>
             <h1 class="title">Clientes Antigos</h1>
-            <p class="subtitle">Controle com nome, numero do recibo, valor a pagar e checkbox.</p>
+            <p class="subtitle">Lista com nome, valor a pagar e checkbox.</p>
         </div>
     </div>
 
@@ -15,10 +15,6 @@
                 <div>
                     <label for="name">Cliente <span style="color: #ef4444;">*</span></label>
                     <input id="name" name="name" required value="{{ old('name') }}" placeholder="Nome do cliente">
-                </div>
-                <div>
-                    <label for="receipt_number">Numero do recibo</label>
-                    <input id="receipt_number" name="receipt_number" value="{{ old('receipt_number') }}" placeholder="Ex: 123">
                 </div>
                 <div>
                     <label for="amount_due">Valor a pagar (R$) <span style="color: #ef4444;">*</span></label>
@@ -37,7 +33,6 @@
                 <thead>
                     <tr>
                         <th>Cliente</th>
-                        <th>Numero do recibo</th>
                         <th>Valor a pagar</th>
                         <th style="text-align: center;">Checkbox</th>
                         <th style="text-align: right;">Acoes</th>
@@ -47,7 +42,6 @@
                     @forelse($oldClients as $oldClient)
                         <tr>
                             <td><strong>{{ $oldClient->name }}</strong></td>
-                            <td>{{ $oldClient->receipt_number ?: '-' }}</td>
                             <td>R$ {{ number_format($oldClient->amount_due, 2, ',', '.') }}</td>
                             <td style="text-align: center;">
                                 <form method="POST" action="{{ route('old-clients.toggle-checked', $oldClient) }}" class="inline">
@@ -66,7 +60,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 20px; color: var(--muted);">
+                            <td colspan="4" style="text-align: center; padding: 20px; color: var(--muted);">
                                 Nenhum cliente antigo cadastrado.
                             </td>
                         </tr>
