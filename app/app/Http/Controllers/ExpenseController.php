@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DailySaldoGastoItem;
 use App\Models\Expense;
+use Throwable;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -38,13 +39,18 @@ class ExpenseController extends Controller
             ? date('Y-m-d', strtotime($saldoRaw))
             : now()->format('Y-m-d');
 
-        if (Schema::hasTable('daily_saldo_gastos_items')) {
-            $saldoGastosItems = DailySaldoGastoItem::query()
-                ->whereDate('ref_date', $saldoDate)
-                ->orderBy('sort_order')
-                ->orderBy('id')
-                ->get();
-            $saldoGastosTotal = (float) $saldoGastosItems->sum('value');
+        if ($this->saldoTableReady()) {
+            try {
+                $saldoGastosItems = DailySaldoGastoItem::query()
+                    ->whereDate('ref_date', $saldoDate)
+                    ->orderBy('sort_order')
+                    ->orderBy('id')
+                    ->get();
+                $saldoGastosTotal = (float) $saldoGastosItems->sum('value');
+            } catch (Throwable $e) {
+                $saldoGastosItems = collect();
+                $saldoGastosTotal = 0.0;
+            }
         } else {
             $saldoGastosItems = collect();
             $saldoGastosTotal = 0.0;
@@ -133,48 +139,60 @@ class ExpenseController extends Controller
 
     public function storeSaldoGastoDia(Request $request): RedirectResponse
     {
-        if (!Schema::hasTable('daily_saldo_gastos_items')) {
+        if (!$this->saldoTableReady()) {
             return redirect()->route('expenses.index')->with('status', 'Execute a migration para habilitar a declaracao de saldo.');
         }
 
-        $data = $request->validate([
-            'ref_date' => ['required', 'date'],
-            'name' => ['required', 'string', 'max:255'],
-            'value' => ['nullable', 'numeric', 'min:0'],
-        ]);
-        $data['value'] = $data['value'] ?? 0;
-        $data['sort_order'] = (int) DailySaldoGastoItem::whereDate('ref_date', $data['ref_date'])->max('sort_order') + 1;
+        try {
+            $data = $request->validate([
+                'ref_date' => ['required', 'date'],
+                'name' => ['required', 'string', 'max:255'],
+                'value' => ['nullable', 'numeric', 'min:0'],
+            ]);
+            $data['value'] = $data['value'] ?? 0;
+            $data['sort_order'] = (int) DailySaldoGastoItem::whereDate('ref_date', $data['ref_date'])->max('sort_order') + 1;
 
-        DailySaldoGastoItem::create($data);
+            DailySaldoGastoItem::create($data);
+        } catch (Throwable $e) {
+            return redirect()->route('expenses.index')->with('status', 'Nao foi possivel salvar o lancamento de saldo.');
+        }
 
         return $this->redirectExpensesWithSaldo($request, 'Lancamento adicionado na declaracao de saldo.');
     }
 
     public function updateSaldoGastoDia(Request $request, DailySaldoGastoItem $daily_saldo_gasto_item): RedirectResponse
     {
-        if (!Schema::hasTable('daily_saldo_gastos_items')) {
+        if (!$this->saldoTableReady()) {
             return redirect()->route('expenses.index')->with('status', 'Tabela da declaracao de saldo nao encontrada.');
         }
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'value' => ['nullable', 'numeric', 'min:0'],
-        ]);
-        $data['value'] = $data['value'] ?? 0;
+        try {
+            $data = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'value' => ['nullable', 'numeric', 'min:0'],
+            ]);
+            $data['value'] = $data['value'] ?? 0;
 
-        $daily_saldo_gasto_item->update($data);
+            $daily_saldo_gasto_item->update($data);
+        } catch (Throwable $e) {
+            return redirect()->route('expenses.index')->with('status', 'Nao foi possivel atualizar o lancamento de saldo.');
+        }
 
         return $this->redirectExpensesWithSaldo($request, 'Lancamento atualizado.');
     }
 
     public function destroySaldoGastoDia(Request $request, DailySaldoGastoItem $daily_saldo_gasto_item): RedirectResponse
     {
-        if (!Schema::hasTable('daily_saldo_gastos_items')) {
+        if (!$this->saldoTableReady()) {
             return redirect()->route('expenses.index')->with('status', 'Tabela da declaracao de saldo nao encontrada.');
         }
 
-        $ref = $daily_saldo_gasto_item->ref_date->format('Y-m-d');
-        $daily_saldo_gasto_item->delete();
+        try {
+            $ref = $daily_saldo_gasto_item->ref_date->format('Y-m-d');
+            $daily_saldo_gasto_item->delete();
+        } catch (Throwable $e) {
+            return redirect()->route('expenses.index')->with('status', 'Nao foi possivel remover o lancamento de saldo.');
+        }
 
         $request->merge(['saldo_date' => $ref]);
 
@@ -197,5 +215,21 @@ class ExpenseController extends Controller
         }
 
         return redirect()->route('expenses.index', $q)->with('status', $message);
+    }
+
+    private function saldoTableReady(): bool
+    {
+        if (!Schema::hasTable('daily_saldo_gastos_items')) {
+            return false;
+        }
+
+        $required = ['ref_date', 'sort_order', 'name', 'value'];
+        foreach ($required as $column) {
+            if (!Schema::hasColumn('daily_saldo_gastos_items', $column)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
