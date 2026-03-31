@@ -7,9 +7,6 @@
             <p class="subtitle">Gerencie os recebimentos</p>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <a href="{{ route('receivables.index', ['status' => 'pending']) }}" class="btn btn-muted">Pendentes</a>
-            <a href="{{ route('receivables.index', ['status' => 'paid']) }}" class="btn btn-muted">Recebidas</a>
-            <a href="{{ route('receivables.index') }}" class="btn btn-muted">Todas</a>
             <a href="{{ route('receivables.create') }}" class="btn btn-primary">Nova Conta</a>
         </div>
     </div>
