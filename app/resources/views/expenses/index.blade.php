@@ -4,7 +4,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
         <div>
             <h1 class="title">Planilha de cotação e retirada</h1>
-            <p class="subtitle">Planilha com descrição, valor, vencimento, pagamento, recibo, NF, status e ações.</p>
+            <p class="subtitle">Planilha com nome, endereço, valor, vencimento, pagamento, recibo, NF, status e ações.</p>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
             <a href="{{ route('expenses.index', array_filter(['status' => 'pending', 'date' => request('date')])) }}" class="btn btn-muted">Pendentes</a>
@@ -35,7 +35,8 @@
             <table>
                 <thead style="background: #f8fafc;">
                     <tr>
-                        <th>Descrição</th>
+                        <th>Nome</th>
+                        <th>Endereço</th>
                         <th>Valor</th>
                         <th>Vencimento</th>
                         <th>Pagamento</th>
@@ -48,7 +49,8 @@
                 <tbody>
                     @forelse ($expenses as $expense)
                         <tr style="{{ $expense->isOverdue() ? 'background: #fef2f2;' : '' }}">
-                            <td><strong>{{ $expense->description }}</strong></td>
+                            <td><strong>{{ $expense->name ?? '—' }}</strong></td>
+                            <td>{{ $expense->description }}</td>
                             <td><strong style="color: #ef4444;">R$ {{ number_format($expense->value, 2, ',', '.') }}</strong></td>
                             <td>{{ $expense->due_date->format('d/m/Y') }}</td>
                             <td>{{ $expense->payment_date ? $expense->payment_date->format('d/m/Y') : '-' }}</td>
@@ -83,7 +85,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" style="text-align: center; padding: 20px; color: var(--muted);">
+                            <td colspan="9" style="text-align: center; padding: 20px; color: var(--muted);">
                                 Nenhum registro na planilha.
                             </td>
                         </tr>

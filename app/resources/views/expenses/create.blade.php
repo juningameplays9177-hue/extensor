@@ -9,8 +9,12 @@
             @csrf
             <div class="form-grid">
                 <div style="grid-column: 1 / -1;">
-                    <label for="description">Descricao <span style="color: #ef4444;">*</span></label>
-                    <input id="description" name="description" value="{{ old('description') }}" required autofocus placeholder="Ex: Almoço, Tinta, Mão de obra...">
+                    <label for="name">Nome <span style="color: #ef4444;">*</span></label>
+                    <input id="name" name="name" value="{{ old('name') }}" required autofocus placeholder="Nome do fornecedor ou referencia">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label for="description">Endereço <span style="color: #ef4444;">*</span></label>
+                    <input id="description" name="description" value="{{ old('description') }}" required placeholder="Endereço completo">
                 </div>
                 <div>
                     <label for="value">Valor (R$) <span style="color: #ef4444;">*</span></label>

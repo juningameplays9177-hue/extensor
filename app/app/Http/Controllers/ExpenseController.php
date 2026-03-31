@@ -42,6 +42,7 @@ class ExpenseController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:255'],
             'value' => ['required', 'numeric', 'min:0'],
             'due_date' => ['required', 'date'],
@@ -68,6 +69,7 @@ class ExpenseController extends Controller
     public function update(Request $request, Expense $expense): RedirectResponse
     {
         $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:255'],
             'value' => ['required', 'numeric', 'min:0'],
             'due_date' => ['required', 'date'],

@@ -10,8 +10,12 @@
             @method('PUT')
             <div class="form-grid">
                 <div style="grid-column: 1 / -1;">
-                    <label for="description">Descricao <span style="color: #ef4444;">*</span></label>
-                    <input id="description" name="description" value="{{ old('description', $expense->description) }}" required autofocus>
+                    <label for="name">Nome <span style="color: #ef4444;">*</span></label>
+                    <input id="name" name="name" value="{{ old('name', $expense->name) }}" required autofocus>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label for="description">Endereço <span style="color: #ef4444;">*</span></label>
+                    <input id="description" name="description" value="{{ old('description', $expense->description) }}" required placeholder="Endereço completo">
                 </div>
                 <div>
                     <label for="value">Valor (R$) <span style="color: #ef4444;">*</span></label>
