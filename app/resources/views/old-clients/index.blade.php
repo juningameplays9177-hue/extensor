@@ -34,7 +34,7 @@
                     <tr>
                         <th>Cliente</th>
                         <th>Valor a pagar</th>
-                        <th style="text-align: center;">Checkbox</th>
+                        <th style="text-align: center;">Pagar</th>
                         <th style="text-align: right;">Acoes</th>
                     </tr>
                 </thead>
