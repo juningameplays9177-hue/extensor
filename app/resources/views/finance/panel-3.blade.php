@@ -61,18 +61,26 @@
                         <th>Nome</th>
                         <th>Valor</th>
                         <th>Data</th>
+                        <th style="text-align: right;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($peopleWhoOwe as $person)
                         <tr>
-                            <td><strong>{{ $person['name'] }}</strong></td>
-                            <td>R$ {{ number_format($person['value'], 2, ',', '.') }}</td>
-                            <td>{{ $person['date'] }}</td>
+                            <td colspan="4" style="padding: 8px;">
+                                <form method="POST" action="{{ route('finance.panel-3.people-who-owe.update', $person['id']) }}" style="display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 10px; align-items: center;">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="text" name="name" value="{{ $person['name'] }}" required>
+                                    <input type="number" name="value" value="{{ $person['value'] }}" step="0.01" min="0" required>
+                                    <input type="date" name="due_date" value="{{ $person['date_iso'] }}" required>
+                                    <button type="submit" class="btn btn-muted" style="padding: 6px 12px; font-size: 13px;">Editar</button>
+                                </form>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" style="text-align: center; padding: 20px; color: var(--muted);">
+                            <td colspan="4" style="text-align: center; padding: 20px; color: var(--muted);">
                                 Ninguém devendo no momento.
                             </td>
                         </tr>

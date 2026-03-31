@@ -34,6 +34,27 @@ class FinancePanel3Controller extends Controller
         return redirect()->route('finance.panel-3')->with('status', 'Pessoa adicionada com sucesso.');
     }
 
+    public function updatePersonWhoOwes(Request $request, Receivable $receivable): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'value' => ['required', 'numeric', 'min:0'],
+            'due_date' => ['required', 'date'],
+        ]);
+
+        if ($receivable->status !== Receivable::STATUS_PENDING) {
+            return redirect()->route('finance.panel-3')->with('status', 'Somente pendentes podem ser editados aqui.');
+        }
+
+        $receivable->update([
+            'description' => $data['name'],
+            'value' => $data['value'],
+            'due_date' => $data['due_date'],
+        ]);
+
+        return redirect()->route('finance.panel-3')->with('status', 'Pessoa atualizada com sucesso.');
+    }
+
     public function index(): View
     {
         $totalIn = (float) Receivable::query()
@@ -85,11 +106,15 @@ class FinancePanel3Controller extends Controller
                     : ($receivable->description ?: 'Sem nome');
 
                 return [
+                    'id' => $receivable->id,
                     'name' => $name,
                     'value' => (float) $receivable->value,
                     'date' => $receivable->due_date
                         ? Carbon::parse($receivable->due_date)->format('d/m/Y')
                         : '-',
+                    'date_iso' => $receivable->due_date
+                        ? Carbon::parse($receivable->due_date)->format('Y-m-d')
+                        : now()->format('Y-m-d'),
                 ];
             });
 
