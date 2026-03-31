@@ -36,6 +36,7 @@
                     <tr>
                         <th>Nome</th>
                         <th>Endereco</th>
+                        <th>Valor devido</th>
                         <th>Recibo</th>
                         <th>NF</th>
                         <th style="text-align: right;">Acoes</th>
@@ -47,6 +48,7 @@
                         <tr style="{{ $receivable->isOverdue() ? 'background: #fef2f2;' : '' }}">
                             <td><strong>{{ $receivable->rental ? $receivable->rental->client->name : ($receivable->description ?? '-') }}</strong></td>
                             <td>{{ $receivable->rental ? $receivable->rental->full_address : '-' }}</td>
+                            <td><strong style="color: #3b82f6;">R$ {{ number_format($receivable->value, 2, ',', '.') }}</strong></td>
                             <td>{{ $receivable->receipt_number ?? '-' }}</td>
                             <td>{{ $receivable->invoice_number ?? '-' }}</td>
                             <td style="text-align: right;">
@@ -72,7 +74,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 20px; color: var(--muted);">
+                            <td colspan="7" style="text-align: center; padding: 20px; color: var(--muted);">
                                 Nenhuma conta a receber cadastrada.
                             </td>
                         </tr>
