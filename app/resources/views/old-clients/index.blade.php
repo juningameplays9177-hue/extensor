@@ -4,7 +4,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
         <div>
             <h1 class="title">Clientes Antigos</h1>
-            <p class="subtitle">Lista com nome, valor a pagar e checkbox.</p>
+            <p class="subtitle">Lista com nome, valor a pagar e status de pagamento.</p>
         </div>
     </div>
 
@@ -34,7 +34,7 @@
                     <tr>
                         <th>Cliente</th>
                         <th>Valor a pagar</th>
-                        <th style="text-align: center;">Checkbox</th>
+                        <th style="text-align: center;">Pagou?</th>
                         <th style="text-align: right;">Acoes</th>
                     </tr>
                 </thead>
@@ -47,7 +47,10 @@
                                 <form method="POST" action="{{ route('old-clients.toggle-checked', $oldClient) }}" class="inline">
                                     @csrf
                                     @method('PATCH')
-                                    <input type="checkbox" onchange="this.form.submit()" {{ $oldClient->checked ? 'checked' : '' }}>
+                                    <select name="paid_status" onchange="this.form.submit()" style="max-width: 140px; margin: 0 auto;">
+                                        <option value="unpaid" {{ $oldClient->checked ? '' : 'selected' }}>Nao pagou</option>
+                                        <option value="paid" {{ $oldClient->checked ? 'selected' : '' }}>Pagou</option>
+                                    </select>
                                 </form>
                             </td>
                             <td style="text-align: right;">

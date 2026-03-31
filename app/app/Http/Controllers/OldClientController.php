@@ -28,13 +28,26 @@ class OldClientController extends Controller
         return redirect()->route('old-clients.index')->with('status', 'Cliente antigo adicionado com sucesso.');
     }
 
-    public function toggleChecked(OldClient $old_client): RedirectResponse
+    public function toggleChecked(Request $request, OldClient $old_client): RedirectResponse
     {
-        $old_client->update([
-            'checked' => !$old_client->checked,
-        ]);
+        $hasExplicitStatus = $request->has('paid_status');
 
-        return redirect()->route('old-clients.index')->with('status', 'Checklist atualizado.');
+        if ($hasExplicitStatus) {
+            $paidStatus = $request->validate([
+                'paid_status' => ['required', 'in:paid,unpaid'],
+            ])['paid_status'];
+
+            $old_client->update([
+                'checked' => $paidStatus === 'paid',
+            ]);
+        } else {
+            // Compatibilidade com comportamento antigo (checkbox toggle).
+            $old_client->update([
+                'checked' => !$old_client->checked,
+            ]);
+        }
+
+        return redirect()->route('old-clients.index')->with('status', 'Status de pagamento atualizado.');
     }
 
     public function destroy(OldClient $old_client): RedirectResponse
