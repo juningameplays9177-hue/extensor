@@ -21,8 +21,16 @@
                     </select>
                 </div>
                 <div style="grid-column: 1 / -1;">
+                    <h2 class="title" style="font-size: 1rem; margin: 10px 0 8px 0;">Planilha de retirada</h2>
+                    <p class="meta" style="margin: 0 0 10px 0;">Campos em linha única, como na planilha de cotação e retirada.</p>
+                </div>
+                <div style="grid-column: 1 / -1;">
                     <label for="description">Nome <span style="color: #ef4444;">*</span></label>
                     <input id="description" name="description" value="{{ old('description', $receivable->description) }}" required autofocus placeholder="Nome do cliente">
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <label for="notes">Endereço</label>
+                    <input type="text" id="notes" name="notes" value="{{ old('notes', $receivable->notes) }}" placeholder="Endereço completo">
                 </div>
                 <div>
                     <label for="value">Valor (R$) <span style="color: #ef4444;">*</span></label>
@@ -50,10 +58,6 @@
                 <div id="payment_date_field">
                     <label for="payment_date">Data de Recebimento</label>
                     <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date', $receivable->payment_date ? $receivable->payment_date->format('Y-m-d') : '') }}">
-                </div>
-                <div style="grid-column: 1 / -1;">
-                    <label for="notes">Endereço</label>
-                    <textarea id="notes" name="notes" rows="3" placeholder="Endereço completo">{{ old('notes', $receivable->notes) }}</textarea>
                 </div>
             </div>
             <div style="display: flex; gap: 12px; margin-top: 18px;">
